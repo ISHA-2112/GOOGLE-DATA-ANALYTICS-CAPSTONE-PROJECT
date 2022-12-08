@@ -1,0 +1,197 @@
+---
+title: "CYCLYSTIC DATA CLEANING IN R"
+author: "ISHA DESAI"
+date: "2022-12-08"
+output:html_document: default
+---
+
+
+## CLEANING THE DATA
+
+The data for the *year 2016* is integrated from different files and cleaned for further analysis. The data is present in separate csv files. Here we bring all the data together and check for any inconsistencies, nulls or incorrect entries.
+
+The packages required are `tidyverse` and `lubridate`. After installing the packages by using the `install.packages()` function we load them using `library()` function.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+```
+
+The following csv files have to be read in order to clean and integrate the data present separately in them. From the naming conventions it is clear that we have 3 files for quarter 1, 3 and 4. For quarter 2 we have 3 separate files, namely for month 4, 5 and 6.
+
+```{r}
+
+q1_2016 <- read_csv("2016/Divvy_Trips_2016_Q1.csv")
+q3_2016 <- read_csv("2016/Divvy_Trips_2016_Q3.csv")
+q4_2016 <- read_csv("2016/Divvy_Trips_2016_Q4.csv")
+q2_04_2016 <- read_csv("2016/Divvy_Trips_2016_04.csv")
+q2_05_2016 <- read_csv("2016/Divvy_Trips_2016_05.csv")
+q2_06_2016 <- read_csv("2016/Divvy_Trips_2016_06.csv")
+```
+
+The newest data (year 2022) has different naming conventions for the column name. In order to align the column names of our year 2016 data with the most recent format we need to change the following column names:
+
+```{r}
+(q4_2016 <- rename(q4_2016
+                   ,ride_id = trip_id
+                   ,rideable_type = bikeid 
+                   ,started_at = starttime  
+                   ,ended_at = stoptime  
+                   ,start_station_name = from_station_name 
+                   ,start_station_id = from_station_id 
+                   ,end_station_name = to_station_name 
+                   ,end_station_id = to_station_id 
+                   ,member_casual = usertype))
+
+(q3_2016 <- rename(q3_2016
+                   ,ride_id = trip_id
+                   ,rideable_type = bikeid 
+                   ,started_at = starttime  
+                   ,ended_at = stoptime  
+                   ,start_station_name = from_station_name 
+                   ,start_station_id = from_station_id 
+                   ,end_station_name = to_station_name 
+                   ,end_station_id = to_station_id 
+                   ,member_casual = usertype))
+
+(q1_2016 <- rename(q1_2016
+                   ,ride_id = trip_id
+                   ,rideable_type = bikeid 
+                   ,started_at = starttime  
+                   ,ended_at = stoptime  
+                   ,start_station_name = from_station_name 
+                   ,start_station_id = from_station_id 
+                   ,end_station_name = to_station_name 
+                   ,end_station_id = to_station_id 
+                   ,member_casual = usertype))
+
+(q2_04_2016 <- rename(q2_04_2016
+                   ,ride_id = trip_id
+                   ,rideable_type = bikeid 
+                   ,started_at = starttime  
+                   ,ended_at = stoptime  
+                   ,start_station_name = from_station_name 
+                   ,start_station_id = from_station_id 
+                   ,end_station_name = to_station_name 
+                   ,end_station_id = to_station_id 
+                   ,member_casual = usertype))
+
+(q2_05_2016 <- rename(q2_05_2016
+                      ,ride_id = trip_id
+                      ,rideable_type = bikeid 
+                      ,started_at = starttime  
+                      ,ended_at = stoptime  
+                      ,start_station_name = from_station_name 
+                      ,start_station_id = from_station_id 
+                      ,end_station_name = to_station_name 
+                      ,end_station_id = to_station_id 
+                      ,member_casual = usertype))
+
+(q2_06_2016 <- rename(q2_06_2016
+                      ,ride_id = trip_id
+                      ,rideable_type = bikeid 
+                      ,started_at = starttime  
+                      ,ended_at = stoptime  
+                      ,start_station_name = from_station_name 
+                      ,start_station_id = from_station_id 
+                      ,end_station_name = to_station_name 
+                      ,end_station_id = to_station_id 
+                      ,member_casual = usertype))
+
+
+```
+
+The `ride_id` and `rideable_type` column data type is char according to the latest (2022) dataset. Thus changing the same.
+
+```{r}
+q4_2016 <-  mutate(q4_2016, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type)) 
+q3_2016 <-  mutate(q3_2016, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type)) 
+q2_04_2016 <-  mutate(q2_04_2016, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type)) 
+q2_05_2016 <-  mutate(q2_05_2016, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type))
+q2_06_2016 <-  mutate(q2_06_2016, ride_id = as.character(ride_id)
+                      ,rideable_type = as.character(rideable_type))
+q1_2016 <-  mutate(q1_2016, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type))
+```
+
+Binding all the dataframes into one table.
+
+```{r}
+trips_on_2016 <- bind_rows(q1_2016, q2_04_2016, q2_05_2016, q2_06_2016, q3_2016, q4_2016)
+```
+
+The columns birthyear, gender and tripduration are not related to our analysis, thus dropping them. 
+
+```{r}
+trips_on_2016 <- trips_on_2016 %>%  
+  select(-c( birthyear, gender, tripduration))
+```
+
+Few files are using 'Subscriber' and 'Customer' in place of 'member' and 'casual'. Making the member_casual column consistent by making all the values as 'member' and 'casual'.
+
+```{r}
+trips_on_2016 <- trips_on_2016 %>% 
+  mutate(member_casual = recode (
+    member_casual, 
+    "Subscriber" = "member",
+    "Customer" = "casual"
+  ))
+```
+
+
+Checking if all the values are from the list ['member', 'casual'].
+```{r}
+table(trips_on_2016$member_casual)
+
+```
+
+There are 40 entries which have the value 'Dependent' for member_casual. These rows are dropped.
+```{r}
+trips_on_2016 <- trips_on_2016[!(trips_on_2016$member_casual == 'Dependent'),]
+```
+
+Checking if the values present are only 'member' or 'casual'.
+```{r}
+table(trips_on_2016$member_casual)
+
+```
+
+Adding a date column. Adding a column for day, month, year and day of week by parsing the value from date column.
+```{r}
+trips_on_2016$date <- as.Date(trips_on_2016$started_at,format= "%m/%d/%Y %H:%M")
+
+trips_on_2016$day <- format(as.Date(trips_on_2016$date), '%d')
+trips_on_2016$month <- format(as.Date(trips_on_2016$date), '%m')
+trips_on_2016$year <- format(as.Date(trips_on_2016$date), '%Y')
+trips_on_2016$day_of_week <- format(as.Date(trips_on_2016$date), "%A")
+```
+
+
+Changing the data type of 'started_at' and 'ended_at' to a POSIXct format.
+```{r}
+trips_on_2016$started_at <- as.POSIXct(trips_on_2016$started_at,format= "%m/%d/%Y %H:%M")
+trips_on_2016$ended_at <- as.POSIXct(trips_on_2016$ended_at,format= "%m/%d/%Y %H:%M")
+
+```
+
+Adding a 'ride_length' column to calculate the difference between start and end time.
+
+```{r}
+trips_on_2016$ride_length <- difftime(trips_on_2016$ended_at,trips_on_2016$started_at)
+
+trips_on_2016$ride_length <- as.numeric(as.character(trips_on_2016$ride_length))
+is.numeric(trips_on_2016$ride_length)
+```
+
+Writing the dataframe as a csv file.
+```{r}
+
+write.csv(trips_on_2016, file='2016.csv')
+```
+
+This csv file is used for further analysis using SQL.
