@@ -129,7 +129,7 @@ The columns birthyear, gender and tripduration are not related to our analysis, 
 
 ```{r}
 trips_on_2016 <- trips_on_2016 %>%  
-  select(-c( birthyear, gender, tripduration))
+  select(-c( birthyear, tripduration))
 ```
 
 Few files are using 'Subscriber' and 'Customer' in place of 'member' and 'casual'. Making the member_casual column consistent by making all the values as 'member' and 'casual'.
