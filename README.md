@@ -6,7 +6,7 @@ The six phases of analysis were implemented as follows:
 
 1. **Ask**:  
 The problem statement was analysed and the following objectives were inferred: 
-  * Analysing difference between casual riders and annual members.
+  * Analysing the differences between casual riders and annual members.
   * Deriving insights that can point us in the direction to convert casual riders into annual members.
 
 2. **Prepare**:  
