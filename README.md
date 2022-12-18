@@ -26,5 +26,5 @@ The insights derived from the analyse phase were visualised using Tableau. The l
 
 6. **Act**:  
 The recommendations for solving the business problems were given in the conclusion of the presentation. The final presentation is putting forth the objectives, insights derived and the conclusion to the stakeholders.
-The file MEMBERSHIP TYPE ANALYSIS.pptx is the final presentation to be presented.
+The file MEMBERSHIP TYPE ANALYSIS.pptx is the final presentation to be presented. Link to presentation: [MEMBERSHIP TYPE ANALYSIS] (https://docs.google.com/presentation/d/1BYjNJB5YR3TvhAHAK2GVhXao26APqwbeKqcKyjDx4s8/edit?usp=sharing)
 
